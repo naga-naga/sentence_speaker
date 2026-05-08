@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+
 interface SentenceItemProps {
   text: string;
   index: number;
@@ -6,8 +8,16 @@ interface SentenceItemProps {
 }
 
 export function SentenceItem({ text, index, isPlaying, onPlay }: SentenceItemProps) {
+  const liRef = useRef<HTMLLIElement>(null);
+
+  useEffect(() => {
+    if (isPlaying) {
+      liRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [isPlaying]);
+
   return (
-    <li className={`sentence-item${isPlaying ? ' playing' : ''}`}>
+    <li ref={liRef} className={`sentence-item${isPlaying ? ' playing' : ''}`}>
       <button
         className="play-button"
         onClick={() => onPlay(index)}
