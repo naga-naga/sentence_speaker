@@ -28,6 +28,9 @@ export default function App() {
 
       <div className="controls">
         <SpeedControl speed={speed} onSpeedChange={setSpeed} />
+        {playingIndex !== null && (
+          <span className="progress-label">{playingIndex + 1} / {sentences.length}</span>
+        )}
         {playingIndex !== null ? (
           <button className="stop-button" onClick={stop}>
             ■ Stop
