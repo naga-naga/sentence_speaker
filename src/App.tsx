@@ -18,7 +18,7 @@ export default function App() {
   const [speed, setSpeed] = useState(1.0);
 
   const sentences = useMemo(() => splitSentences(text), [text]);
-  const { speak, speakAll, playingIndex } = useSpeech(speed);
+  const { speak, speakAll, stop, playingIndex } = useSpeech(speed);
 
   return (
     <div className="container">
@@ -28,13 +28,19 @@ export default function App() {
 
       <div className="controls">
         <SpeedControl speed={speed} onSpeedChange={setSpeed} />
-        <button
-          className="play-all-button"
-          onClick={() => speakAll(sentences)}
-          disabled={sentences.length === 0}
-        >
-          ▶▶ Play All
-        </button>
+        {playingIndex !== null ? (
+          <button className="stop-button" onClick={stop}>
+            ■ Stop
+          </button>
+        ) : (
+          <button
+            className="play-all-button"
+            onClick={() => speakAll(sentences)}
+            disabled={sentences.length === 0}
+          >
+            ▶▶ Play All
+          </button>
+        )}
       </div>
 
       <SentenceList
