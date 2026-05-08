@@ -114,6 +114,12 @@ h1 {
   background: #a93226;
 }
 
+.shortcut-hint {
+  font-size: 0.78rem;
+  color: #999;
+  margin: 0 0 8px;
+}
+
 /* 文リスト */
 .sentence-list {
   list-style: decimal;

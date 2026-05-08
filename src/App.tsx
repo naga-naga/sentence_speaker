@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import './App.css';
 import { SentenceList } from './components/SentenceList';
 import { SpeedControl } from './components/SpeedControl';
@@ -20,6 +20,27 @@ export default function App() {
 
   const sentences = useMemo(() => splitSentences(text), [text]);
   const { speak, speakAll, stop, playingIndex } = useSpeech(speed);
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.target instanceof HTMLTextAreaElement) return;
+
+      if (e.key === ' ') {
+        e.preventDefault();
+        playingIndex !== null ? stop() : speakAll(sentences);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        const next = playingIndex !== null ? playingIndex + 1 : 0;
+        if (next < sentences.length) speak(sentences[next], next);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const prev = (playingIndex ?? 1) - 1;
+        if (prev >= 0) speak(sentences[prev], prev);
+      }
+    }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [playingIndex, sentences, speak, speakAll, stop]);
 
   return (
     <div className="container">
@@ -46,6 +67,8 @@ export default function App() {
           </button>
         )}
       </div>
+
+      <p className="shortcut-hint">Space: 全文再生 / 停止　←→: 前後の文</p>
 
       <SentenceList
         sentences={sentences}
