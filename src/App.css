@@ -49,6 +49,32 @@ h1 {
   min-width: 7em;
 }
 
+.speed-presets {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.speed-preset {
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  color: #333;
+}
+
+.speed-preset:hover {
+  background: #f0f0f0;
+}
+
+.speed-preset.active {
+  background: #0078d4;
+  color: #fff;
+  border-color: #0078d4;
+}
+
 .progress-label {
   font-size: 0.85rem;
   color: #666;
