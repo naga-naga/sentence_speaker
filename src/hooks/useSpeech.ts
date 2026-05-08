@@ -10,39 +10,49 @@ interface UseSpeechReturn {
 export function useSpeech(speed: number): UseSpeechReturn {
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const cancelledRef = useRef(false);
+  // 世代カウンター: cancel() 後に非同期で発火する stale な onerror/onend が
+  // 新しい playingIndex を上書きしないようにするため
+  const genRef = useRef(0);
 
   function stop() {
     cancelledRef.current = true;
+    genRef.current++;
     window.speechSynthesis.cancel();
     setPlayingIndex(null);
   }
 
   function speak(text: string, index: number) {
-    cancelledRef.current = true;  // 実行中の speakAll チェーンを中断
+    cancelledRef.current = true;
+    genRef.current++;
     window.speechSynthesis.cancel();
-    cancelledRef.current = false; // この単文再生は中断しない
+    cancelledRef.current = false;
+
+    const thisGen = genRef.current;
     setPlayingIndex(index);
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
     utterance.rate = speed;
-    utterance.onend = () => setPlayingIndex(null);
-    utterance.onerror = () => setPlayingIndex(null);
+    utterance.onend = () => { if (genRef.current === thisGen) setPlayingIndex(null); };
+    utterance.onerror = () => { if (genRef.current === thisGen) setPlayingIndex(null); };
     window.speechSynthesis.speak(utterance);
   }
 
   function speakAll(sentences: string[]) {
     cancelledRef.current = false;
+    genRef.current++;
     window.speechSynthesis.cancel();
 
+    const thisGen = genRef.current;
+
     function speakAt(index: number) {
-      if (cancelledRef.current) { setPlayingIndex(null); return; }
+      if (cancelledRef.current || genRef.current !== thisGen) { setPlayingIndex(null); return; }
       if (index >= sentences.length) { setPlayingIndex(null); return; }
       setPlayingIndex(index);
       const utterance = new SpeechSynthesisUtterance(sentences[index]);
       utterance.lang = 'en-US';
       utterance.rate = speed;
-      utterance.onend = () => speakAt(index + 1);
-      utterance.onerror = () => setPlayingIndex(null);
+      utterance.onend = () => { if (genRef.current === thisGen) speakAt(index + 1); };
+      utterance.onerror = () => { if (genRef.current === thisGen) setPlayingIndex(null); };
       window.speechSynthesis.speak(utterance);
     }
 
