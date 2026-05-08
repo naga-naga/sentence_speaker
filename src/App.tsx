@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import './App.css';
 import { SentenceList } from './components/SentenceList';
 import { SpeedControl } from './components/SpeedControl';
 import { TextInput } from './components/TextInput';
+import { useLocalStorage } from './hooks/useLocalStorage';
 import { useSpeech } from './hooks/useSpeech';
 import { splitSentences } from './utils/splitSentences';
 
@@ -14,8 +15,8 @@ const SAMPLE_TEXT =
   "I think today is going to be a wonderful day.";
 
 export default function App() {
-  const [text, setText] = useState(SAMPLE_TEXT);
-  const [speed, setSpeed] = useState(1.0);
+  const [text, setText] = useLocalStorage('ss-text', SAMPLE_TEXT);
+  const [speed, setSpeed] = useLocalStorage('ss-speed', 1.0);
 
   const sentences = useMemo(() => splitSentences(text), [text]);
   const { speak, speakAll, stop, playingIndex } = useSpeech(speed);
