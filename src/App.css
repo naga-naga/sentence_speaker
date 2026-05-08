@@ -131,13 +131,17 @@ h1 {
 }
 
 .sentence-item {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  padding: 8px 10px;
+  padding: 2px 10px;
   border-radius: 6px;
   border-left: 4px solid transparent;
   transition: background 0.15s;
+}
+
+.sentence-item-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 6px 0;
 }
 
 .sentence-item.playing {

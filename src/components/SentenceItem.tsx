@@ -18,14 +18,16 @@ export function SentenceItem({ text, index, isPlaying, onPlay }: SentenceItemPro
 
   return (
     <li ref={liRef} className={`sentence-item${isPlaying ? ' playing' : ''}`}>
-      <button
-        className="play-button"
-        onClick={() => onPlay(index)}
-        aria-label={isPlaying ? 'Playing' : 'Play'}
-      >
-        {isPlaying ? '■' : '▶'}
-      </button>
-      <span className="sentence-text">{text}</span>
+      <div className="sentence-item-row">
+        <button
+          className="play-button"
+          onClick={() => onPlay(index)}
+          aria-label={isPlaying ? 'Playing' : 'Play'}
+        >
+          {isPlaying ? '■' : '▶'}
+        </button>
+        <span className="sentence-text">{text}</span>
+      </div>
     </li>
   );
 }
